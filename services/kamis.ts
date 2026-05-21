@@ -1,5 +1,4 @@
 import type { PriceData } from "@/types/quiz";
-import { readCache, writeCache } from "@/lib/price-cache";
 
 const KAMIS_ENDPOINT = "https://www.kamis.or.kr/service/price/xml.do";
 
@@ -56,27 +55,4 @@ export async function fetchPricesFromKamis(date: string): Promise<PriceData[]> {
 
   if (prices.length === 0) throw new Error("유효한 가격 데이터가 없습니다");
   return prices;
-}
-
-export interface PriceResult {
-  data: PriceData[];
-  fromCache: boolean;
-}
-
-/**
- * 가격 데이터를 가져온다. 성공 시 캐시에 저장하고, 실패 시 직전 캐시로 폴백한다.
- * 캐시도 없으면 원래 에러를 던진다.
- */
-export async function getPrices(date: string): Promise<PriceResult> {
-  try {
-    const data = await fetchPricesFromKamis(date);
-    writeCache(data);
-    return { data, fromCache: false };
-  } catch (err) {
-    const cached = readCache();
-    if (cached && cached.length > 0) {
-      return { data: cached, fromCache: true };
-    }
-    throw err;
-  }
 }

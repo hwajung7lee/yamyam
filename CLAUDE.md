@@ -36,6 +36,8 @@ Ideate → Define → Sketch → Plan → Build → Compound
 | Vitest (jsdom, `@testing-library/react`) | 단위·통합·수용 기준 | `<file>.test.tsx` colocated |
 | Playwright | E2E | `e2e/*.spec.ts` | global
 
+> Vitest와 Playwright는 둘 다 `*.spec.ts`를 매칭하므로, `vitest.config.ts`의 `exclude`에 반드시 `e2e/**`를 둔다. 빠지면 Vitest가 Playwright 스펙을 수집해 "test() was called here" 오류가 난다.
+
 ### Commands
 
 | 명령 | 범위 |

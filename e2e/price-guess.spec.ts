@@ -16,6 +16,7 @@ const question: Question = {
   date: "2026-05-21",
   market: "소매",
   fromCache: false,
+  estimated: false,
 };
 
 const CORRECT = /3,000원 ~ 4,000원/;

@@ -23,4 +23,6 @@ export interface Question {
   date: string;
   market: string;
   fromCache: boolean;
+  /** 실데이터가 아니라 AI(LLM) 추정 시세인지 여부. */
+  estimated: boolean;
 }

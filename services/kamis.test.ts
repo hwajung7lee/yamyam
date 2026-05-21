@@ -1,12 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-
-vi.mock("@/lib/price-cache", () => ({
-  readCache: vi.fn(),
-  writeCache: vi.fn(),
-}));
-
-import { readCache, writeCache } from "@/lib/price-cache";
-import { fetchPricesFromKamis, getPrices } from "./kamis";
+import { fetchPricesFromKamis } from "./kamis";
 
 const okPayload = {
   data: {
@@ -22,8 +15,6 @@ const okPayload = {
 beforeEach(() => {
   process.env.KAMIS_CERT_KEY = "test-key";
   process.env.KAMIS_CERT_ID = "test-id";
-  vi.mocked(readCache).mockReset();
-  vi.mocked(writeCache).mockReset();
 });
 
 afterEach(() => {
@@ -46,33 +37,18 @@ describe("fetchPricesFromKamis", () => {
       market: "소매",
     });
   });
-});
 
-describe("getPrices", () => {
-  it("성공 시 캐시에 저장하고 fromCache=false 반환", async () => {
+  it("인증 정보가 없으면 에러를 던진다", async () => {
+    delete process.env.KAMIS_CERT_KEY;
+    delete process.env.KAMIS_CERT_ID;
+    await expect(fetchPricesFromKamis("2026-05-21")).rejects.toThrow();
+  });
+
+  it("HTTP 오류 응답이면 에러를 던진다", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({ ok: true, json: async () => okPayload }),
+      vi.fn().mockResolvedValue({ ok: false, status: 500 }),
     );
-    const result = await getPrices("2026-05-21");
-    expect(result.fromCache).toBe(false);
-    expect(result.data).toHaveLength(2);
-    expect(writeCache).toHaveBeenCalledOnce();
-  });
-
-  it("API 실패 + 캐시 존재 → 캐시 반환, fromCache=true, 기준일은 캐시 날짜", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network")));
-    vi.mocked(readCache).mockReturnValue([
-      { itemName: "배추", unit: "1포기", price: 3200, date: "2026-05-20", market: "소매" },
-    ]);
-    const result = await getPrices("2026-05-21");
-    expect(result.fromCache).toBe(true);
-    expect(result.data[0].date).toBe("2026-05-20");
-  });
-
-  it("API 실패 + 캐시 없음 → 에러를 던진다", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network")));
-    vi.mocked(readCache).mockReturnValue(null);
-    await expect(getPrices("2026-05-21")).rejects.toThrow();
+    await expect(fetchPricesFromKamis("2026-05-21")).rejects.toThrow();
   });
 });

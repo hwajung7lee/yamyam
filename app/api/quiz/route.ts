@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getPrices } from "@/services/kamis";
+import { getPrices } from "@/services/price-provider";
 import { buildOptions } from "@/lib/build-options";
 import type { Question } from "@/types/quiz";
 
@@ -13,7 +13,7 @@ export async function GET() {
     .slice(0, 10);
 
   try {
-    const { data, fromCache } = await getPrices(today);
+    const { data, fromCache, estimated } = await getPrices(today);
     const item = data[Math.floor(Math.random() * data.length)];
     const { options, correctIndex } = buildOptions(item.price);
 
@@ -26,6 +26,7 @@ export async function GET() {
       date: item.date,
       market: item.market,
       fromCache,
+      estimated,
     };
 
     return NextResponse.json(question);

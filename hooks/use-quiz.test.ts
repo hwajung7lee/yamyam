@@ -17,6 +17,7 @@ const sampleQuestion: Question = {
   date: "2026-05-21",
   market: "소매",
   fromCache: false,
+  estimated: false,
 };
 
 function mockFetchOnce(q: Question, ok = true) {

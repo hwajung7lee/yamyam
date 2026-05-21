@@ -18,6 +18,7 @@ const question: Question = {
   date: "2026-05-21",
   market: "서울 도매",
   fromCache: false,
+  estimated: false,
 };
 
 const noop = () => {};
@@ -98,6 +99,21 @@ describe("QuestionScreen", () => {
     expect(screen.getByLabelText("정답")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "결과 보기" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /3,000원 ~ 4,000원/ })).toBeDisabled();
+  });
+
+  it("AI 추정 가격이면 'AI 추정' 배지를 표시한다", () => {
+    render(
+      <QuestionScreen
+        question={{ ...question, estimated: true, market: "AI 추정" }}
+        status="correct"
+        streak={1}
+        selectedIndex={2}
+        onAnswer={noop}
+        onNext={noop}
+        onSeeResult={noop}
+      />,
+    );
+    expect(screen.getByText("AI 추정")).toBeInTheDocument();
   });
 
   it("정답 공개에서 '다음 문제' 클릭 → onNext 호출", async () => {

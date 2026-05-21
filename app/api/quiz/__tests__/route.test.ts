@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { PriceRange } from "@/types/quiz";
 
-vi.mock("@/services/kamis", () => ({
+vi.mock("@/services/price-provider", () => ({
   getPrices: vi.fn(),
 }));
 
-import { getPrices } from "@/services/kamis";
+import { getPrices } from "@/services/price-provider";
 import { GET } from "../route";
 
 function contains(range: PriceRange, price: number): boolean {
@@ -21,6 +21,7 @@ describe("GET /api/quiz", () => {
     vi.mocked(getPrices).mockResolvedValue({
       data: [{ itemName: "배추", unit: "1포기", price: 3200, date: "2026-05-21", market: "소매" }],
       fromCache: false,
+      estimated: false,
     });
 
     const res = await GET();
@@ -28,6 +29,7 @@ describe("GET /api/quiz", () => {
     const q = await res.json();
 
     expect(q.itemName).toBe("배추");
+    expect(q.estimated).toBe(false);
     expect(q.unit).toBe("1포기");
     expect(q.actualPrice).toBe(3200);
     expect(q.market).toBe("소매");
@@ -42,6 +44,7 @@ describe("GET /api/quiz", () => {
     vi.mocked(getPrices).mockResolvedValue({
       data: [{ itemName: "무", unit: "1개", price: 1500, date: "2026-05-20", market: "소매" }],
       fromCache: true,
+      estimated: false,
     });
 
     const res = await GET();
@@ -49,6 +52,19 @@ describe("GET /api/quiz", () => {
     const q = await res.json();
     expect(q.fromCache).toBe(true);
     expect(q.date).toBe("2026-05-20");
+  });
+
+  it("AI 추정 폴백 시 estimated=true로 반환한다", async () => {
+    vi.mocked(getPrices).mockResolvedValue({
+      data: [{ itemName: "사과", unit: "1개", price: 2000, date: "2026-05-21", market: "AI 추정" }],
+      fromCache: false,
+      estimated: true,
+    });
+    const res = await GET();
+    expect(res.status).toBe(200);
+    const q = await res.json();
+    expect(q.estimated).toBe(true);
+    expect(q.market).toBe("AI 추정");
   });
 
   it("가격 데이터를 못 가져오면 503을 반환한다", async () => {

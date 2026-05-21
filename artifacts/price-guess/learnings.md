@@ -12,7 +12,7 @@ applied: not-yet
 
 ---
 category: tooling
-applied: not-yet
+applied: rule
 ---
 ## Vitest가 Playwright e2e 스펙을 수집해 실패
 
