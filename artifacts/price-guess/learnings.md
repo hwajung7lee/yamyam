@@ -44,3 +44,13 @@ applied: not-yet
 5. 랭킹 GET이 전체 목록 반환 → 서버에서 `slice(0, TOP_N=10)`. `readRanking()`은 full 유지(addRanking 보존), GET/POST 응답만 slice.
 추가로 suggestion 중 KST 날짜(quiz route)만 수용 — 자정~09시 UTC 오프셋 오류 예방.
 **다시 마주칠 가능성**: 높음 — (a) shadcn 오버라이드 유혹, (b) 공개 Route Handler 입력 검증 누락은 반복 패턴.
+
+---
+category: spec-ambiguity
+applied: not-yet
+---
+## KAMIS 키 부재 → Gemini 추정 시세 폴백으로 spec 확장
+
+**상황**: Step 5 Human Review 중, 사용자가 KAMIS 키 미확보 → "Gemini로 대체 가능?"이라고 요청. spec의 데이터 출처(공공데이터)와 불변 규칙(출처 투명성=실데이터)을 건드리는 변경.
+**판단**: 즉시 구현하지 않고 (a) 역할(폴백 vs 완전교체), (b) 출처 표시 방식을 먼저 질문. "폴백 + 'AI 추정' 배지"로 결정. 가격 소싱이 services에 격리돼 있어 `price-provider.ts` 코디네이터(KAMIS→캐시→Gemini)로 깔끔히 추가, `kamis.ts`는 fetch 전담으로 슬림화. spec의 불변 규칙·의존성을 갱신해 정합성 유지.
+**다시 마주칠 가능성**: 중간 — 외부 데이터 의존 feature에서 "키/쿼터 없으니 LLM으로 대체" 요청은 흔함. 교훈: 소싱을 provider 인터페이스로 격리하면 폴백 추가가 저비용. 단, "실데이터" 전제 게임에서 LLM 폴백은 출처 라벨링이 필수(정직성).
