@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe: 물가 맞히기</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --w-bg: #f5f5f5;
+    --w-border: #ccc;
+    --w-text: #555;
+    --w-muted: #aaa;
+    --w-fill: #eee;
+  }
+
+  * {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--w-text);
+  }
+
+  body { background: var(--w-bg); }
+
+  /* Screen nav */
+  nav { position: sticky; top: 0; z-index: 40; background: var(--w-bg); border-bottom: 1px solid var(--w-border); }
+  nav button { cursor: pointer; font-size: 13px; }
+  nav button:hover { background: var(--w-fill); border-radius: 4px; }
+  nav button.active { font-weight: bold; border-bottom: 2px solid var(--w-text); }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Viewport toggle */
+  .vp-toggle button {
+    font-size: 12px; padding: 2px 8px;
+    border: 1px solid var(--w-border); cursor: pointer; background: white;
+  }
+  .vp-toggle button:first-child { border-radius: 4px 0 0 4px; }
+  .vp-toggle button:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+  .vp-toggle button.active { background: var(--w-text); color: white; }
+
+  /* Mobile viewport frame */
+  body.viewport-mobile .screen-content {
+    max-width: 375px !important;
+    margin: 24px auto !important;
+    border: 2px solid var(--w-border);
+    border-radius: 24px;
+    min-height: 667px;
+    background: white;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 16px !important;
+  }
+
+  /* Screen Notes */
+  .screen-notes {
+    background: #fffde7;
+    border-left: 3px solid #ffd54f;
+    padding: 12px 16px;
+    margin-top: 24px;
+    font-size: 13px;
+    border-radius: 0 4px 4px 0;
+  }
+  .screen-notes summary {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    color: #b0a050;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .screen-notes p { margin: 6px 0 2px; color: #777; }
+  .screen-notes ul { margin: 4px 0 0 16px; padding: 0; color: #777; }
+  .screen-notes li { margin: 2px 0; }
+
+  /* wireframe helpers */
+  .w-box { border: 1px solid var(--w-border); border-radius: 8px; background: var(--w-fill); }
+  .w-option { border: 1px solid var(--w-border); border-radius: 8px; background: white; cursor: pointer; }
+  .w-option:hover { background: var(--w-fill); }
+  .w-option.correct { border: 2px solid var(--w-text); background: var(--w-fill); }
+  .w-option.wrong { border: 2px dashed var(--w-text); }
+  .w-dim { color: var(--w-muted); }
+</style>
+</head>
+<body class="p-0 m-0 viewport-mobile">
+
+<nav class="flex items-center gap-2 px-6 py-2 flex-wrap">
+  <span class="text-xs" style="color:var(--w-muted)">wireframe</span>
+  <button id="nav-0" onclick="show(0)" class="px-2 py-1">시작</button>
+  <button id="nav-1" onclick="show(1)" class="px-2 py-1">문제(답 전)</button>
+  <button id="nav-2" onclick="show(2)" class="px-2 py-1">문제(정답)</button>
+  <button id="nav-3" onclick="show(3)" class="px-2 py-1">문제(오답)</button>
+  <button id="nav-4" onclick="show(4)" class="px-2 py-1">결과·등록</button>
+  <button id="nav-5" onclick="show(5)" class="px-2 py-1">랭킹</button>
+  <button id="nav-6" onclick="show(6)" class="px-2 py-1">데이터없음</button>
+  <div class="vp-toggle flex ml-auto">
+    <button id="vp-desktop" onclick="setViewport('desktop')">Desktop</button>
+    <button id="vp-mobile" onclick="setViewport('mobile')" class="active">Mobile</button>
+  </div>
+</nav>
+
+<!-- ============ Screen 0: 시작 ============ -->
+<div id="screen-0" class="screen" data-scenario="scenario-1">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">시작 화면</h2>
+
+    <div class="flex flex-col items-center text-center gap-6 py-10">
+      <i data-lucide="carrot" class="w-12 h-12"></i>
+      <div>
+        <div class="text-2xl font-bold">물가 맞히기</div>
+        <p class="w-dim text-sm mt-2">오늘의 농수산물 시세, 가격대를 맞혀보세요</p>
+      </div>
+
+      <div class="w-box px-6 py-4 w-full max-w-xs">
+        <div class="text-xs w-dim">내 최고 기록</div>
+        <div class="text-3xl font-bold mt-1">12 <span class="text-sm w-dim font-normal">연속</span></div>
+      </div>
+
+      <button class="w-box px-8 py-3 font-bold flex items-center gap-2" style="background:var(--w-text); color:white;">
+        <i data-lucide="play"></i> 게임 시작
+      </button>
+
+      <button class="text-sm underline w-dim flex items-center gap-1">
+        <i data-lucide="trophy" class="w-4 h-4"></i> 랭킹 보기
+      </button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>게임의 첫 진입점. 최고 기록은 이전 온라인 랭킹 등록 결과 중 본인 최고치(없으면 "-").</p>
+        <ul>
+          <li>트리거: 앱 진입 시 첫 화면</li>
+          <li>인터랙션: "게임 시작" 클릭 → 문제 화면 / "랭킹 보기" 클릭 → 랭킹 화면</li>
+          <li>전환: 데이터 로드 실패 + 캐시 없음 → 데이터없음 화면</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Screen 1: 문제 (답하기 전) ============ -->
+<div id="screen-1" class="screen" data-scenario="scenario-1, scenario-2, scenario-3">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">문제 — 답하기 전</h2>
+
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-2">
+        <i data-lucide="flame" class="w-5 h-5"></i>
+        <span class="font-bold">연속 정답 <span class="text-lg">3</span></span>
+      </div>
+      <span class="text-xs w-dim">문제 #4</span>
+    </div>
+
+    <div class="w-box flex flex-col items-center text-center gap-2 py-8 mb-6">
+      <i data-lucide="image" class="w-10 h-10 w-dim"></i>
+      <div class="text-xl font-bold">배추</div>
+      <div class="text-sm w-dim">1포기 가격은?</div>
+    </div>
+
+    <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+      <button class="w-option px-4 py-4 font-bold">① 1,000원 ~ 2,000원</button>
+      <button class="w-option px-4 py-4 font-bold">② 2,000원 ~ 4,000원</button>
+      <button class="w-option px-4 py-4 font-bold">③ 4,000원 ~ 6,000원</button>
+      <button class="w-option px-4 py-4 font-bold">④ 6,000원 ~ 8,000원</button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>핵심 플레이 화면. 보기 4개는 서로 겹치지 않는 가격 구간이며 정확히 1개만 정답.</p>
+        <ul>
+          <li>트리거: "게임 시작" 또는 직전 문제 정답 후 "다음 문제"</li>
+          <li>인터랙션: 보기 1개 선택 → 정답이면 정답 공개 상태, 오답이면 오답 공개 상태</li>
+          <li>전환: 정답 → 문제(정답) / 오답 → 문제(오답)</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Screen 2: 문제 (정답 공개) ============ -->
+<div id="screen-2" class="screen" data-scenario="scenario-2, scenario-6">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">문제 — 정답 공개</h2>
+
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-2">
+        <i data-lucide="flame" class="w-5 h-5"></i>
+        <span class="font-bold">연속 정답 <span class="text-lg">4</span></span>
+      </div>
+      <span class="text-xs w-dim">문제 #4</span>
+    </div>
+
+    <div class="w-box flex items-center gap-2 px-4 py-3 mb-4">
+      <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+      <span class="font-bold">정답!</span>
+    </div>
+
+    <div class="grid grid-cols-1 @md:grid-cols-2 gap-3 mb-5">
+      <div class="w-option px-4 py-4">① 1,000원 ~ 2,000원</div>
+      <div class="w-option correct px-4 py-4 font-bold flex items-center justify-between">
+        <span>② 2,000원 ~ 4,000원</span><i data-lucide="check" class="w-4 h-4"></i>
+      </div>
+      <div class="w-option px-4 py-4">③ 4,000원 ~ 6,000원</div>
+      <div class="w-option px-4 py-4">④ 6,000원 ~ 8,000원</div>
+    </div>
+
+    <div class="w-box px-4 py-3 mb-6">
+      <div class="text-xs w-dim">실제 가격</div>
+      <div class="font-bold text-lg mt-1">배추 1포기 3,200원</div>
+      <div class="text-xs w-dim mt-1">서울 도매 · 2026년 5월 21일 기준</div>
+    </div>
+
+    <button class="w-box w-full px-6 py-3 font-bold flex items-center justify-center gap-2" style="background:var(--w-text); color:white;">
+      다음 문제 <i data-lucide="arrow-right"></i>
+    </button>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>정답 시 같은 문제 화면에서 정답 강조 + 실제 가격/출처 패널을 노출한 상태. 연속 정답 +1.</p>
+        <ul>
+          <li>트리거: 답 전 화면에서 정답 보기 선택</li>
+          <li>인터랙션: 선택한 정답 보기 강조, 실제 가격·기준일·시장 표시 / "다음 문제" 클릭</li>
+          <li>전환: "다음 문제" → 새 문제(답 전). 캐시로 진행 시(scenario-6) 기준일이 캐시 날짜로 표기됨</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Screen 3: 문제 (오답 공개) ============ -->
+<div id="screen-3" class="screen" data-scenario="scenario-3">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">문제 — 오답 공개</h2>
+
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-2">
+        <i data-lucide="flame" class="w-5 h-5"></i>
+        <span class="font-bold">연속 정답 <span class="text-lg">3</span></span>
+      </div>
+      <span class="text-xs w-dim">문제 #4</span>
+    </div>
+
+    <div class="w-box flex items-center gap-2 px-4 py-3 mb-4">
+      <i data-lucide="x-circle" class="w-6 h-6"></i>
+      <span class="font-bold">오답!</span>
+    </div>
+
+    <div class="grid grid-cols-1 @md:grid-cols-2 gap-3 mb-5">
+      <div class="w-option px-4 py-4">① 1,000원 ~ 2,000원</div>
+      <div class="w-option correct px-4 py-4 font-bold flex items-center justify-between">
+        <span>② 2,000원 ~ 4,000원</span><i data-lucide="check" class="w-4 h-4"></i>
+      </div>
+      <div class="w-option wrong px-4 py-4 flex items-center justify-between">
+        <span>③ 4,000원 ~ 6,000원</span><i data-lucide="x" class="w-4 h-4"></i>
+      </div>
+      <div class="w-option px-4 py-4">④ 6,000원 ~ 8,000원</div>
+    </div>
+
+    <div class="w-box px-4 py-3 mb-6">
+      <div class="text-xs w-dim">실제 가격</div>
+      <div class="font-bold text-lg mt-1">배추 1포기 3,200원</div>
+      <div class="text-xs w-dim mt-1">서울 도매 · 2026년 5월 21일 기준</div>
+    </div>
+
+    <button class="w-box w-full px-6 py-3 font-bold flex items-center justify-center gap-2" style="background:var(--w-text); color:white;">
+      결과 보기 <i data-lucide="flag"></i>
+    </button>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>오답 시 내가 고른 보기(오답)와 실제 정답 보기를 함께 표시. 연속 정답 더는 오르지 않고 게임 종료 수순.</p>
+        <ul>
+          <li>트리거: 답 전 화면에서 오답 보기 선택</li>
+          <li>인터랙션: 내 선택(오답)과 정답 동시 표시, 실제 가격 노출 / "결과 보기" 클릭</li>
+          <li>전환: "결과 보기" → 결과·등록 화면 (최종 연속 정답 = 오답 직전까지 맞힌 수)</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Screen 4: 결과 + 랭킹 등록 ============ -->
+<div id="screen-4" class="screen" data-scenario="scenario-3, scenario-4">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">결과 · 랭킹 등록</h2>
+
+    <div class="flex flex-col items-center text-center gap-2 py-6">
+      <i data-lucide="flame" class="w-10 h-10"></i>
+      <div class="text-sm w-dim">최종 연속 정답</div>
+      <div class="text-5xl font-bold">3</div>
+    </div>
+
+    <div class="w-box px-4 py-4 mb-4">
+      <label class="text-xs w-dim">닉네임</label>
+      <div class="flex gap-2 mt-2">
+        <input type="text" placeholder="닉네임 입력" class="flex-1 px-3 py-2 border rounded" style="border-color:var(--w-border); background:white;">
+        <button class="w-box px-5 py-2 font-bold" style="background:var(--w-text); color:white;">등록</button>
+      </div>
+      <p class="text-xs w-dim mt-2" style="display:none;">닉네임을 입력하세요 (빈 입력 시 표시)</p>
+    </div>
+
+    <div class="flex gap-2">
+      <button class="w-box flex-1 px-4 py-3 font-bold flex items-center justify-center gap-2">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> 다시 하기
+      </button>
+      <button class="w-box flex-1 px-4 py-3 flex items-center justify-center gap-2">
+        <i data-lucide="trophy" class="w-4 h-4"></i> 랭킹 보기
+      </button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>게임 종료 후 최종 연속 정답 수를 보여주고 온라인 랭킹 등록을 받는 화면.</p>
+        <ul>
+          <li>트리거: 오답 공개 화면에서 "결과 보기"</li>
+          <li>인터랙션: 닉네임 입력 후 "등록" → 랭킹 반영(빈 입력 시 안내, 중복 등록 방지) / "다시 하기" → 새 게임 / "랭킹 보기" → 랭킹 화면</li>
+          <li>전환: 등록 완료 → 랭킹 화면(내 항목 강조) / "다시 하기" → 문제(답 전)</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Screen 5: 랭킹 ============ -->
+<div id="screen-5" class="screen" data-scenario="scenario-5">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">랭킹</h2>
+
+    <div class="flex items-center gap-2 mb-4">
+      <i data-lucide="trophy" class="w-5 h-5"></i>
+      <span class="font-bold">전체 랭킹</span>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <div class="w-option px-4 py-3 flex items-center gap-3">
+        <span class="font-bold w-6 text-center">1</span>
+        <span class="flex-1">달려라참치</span>
+        <span class="font-bold">50</span>
+      </div>
+      <div class="w-option px-4 py-3 flex items-center gap-3">
+        <span class="font-bold w-6 text-center">2</span>
+        <span class="flex-1">배추도사</span>
+        <span class="font-bold">42</span>
+      </div>
+      <div class="w-option correct px-4 py-3 flex items-center gap-3 font-bold">
+        <span class="w-6 text-center">3</span>
+        <span class="flex-1 flex items-center gap-1"><i data-lucide="user" class="w-4 h-4"></i> 홍길동 (나)</span>
+        <span>30</span>
+      </div>
+      <div class="w-option px-4 py-3 flex items-center gap-3">
+        <span class="font-bold w-6 text-center">4</span>
+        <span class="flex-1">시장왕</span>
+        <span class="font-bold">28</span>
+      </div>
+      <div class="w-option px-4 py-3 flex items-center gap-3">
+        <span class="font-bold w-6 text-center">5</span>
+        <span class="flex-1">감자칩</span>
+        <span class="font-bold">21</span>
+      </div>
+    </div>
+
+    <button class="w-box w-full px-6 py-3 font-bold mt-6 flex items-center justify-center gap-2" style="background:var(--w-text); color:white;">
+      <i data-lucide="play" class="w-4 h-4"></i> 다시 도전
+    </button>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>점수 내림차순 순위 목록. 방금 등록한 내 기록은 강조 표시(여기선 3위 "홍길동(나)").</p>
+        <ul>
+          <li>트리거: 시작/결과 화면의 "랭킹 보기", 또는 점수 등록 직후</li>
+          <li>인터랙션: 순위 스크롤 열람 / "다시 도전" 클릭</li>
+          <li>전환: "다시 도전" → 문제(답 전)</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Screen 6: 데이터 없음 ============ -->
+<div id="screen-6" class="screen" data-scenario="scenario-7">
+  <div class="screen-content @container max-w-2xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">데이터 없음</h2>
+
+    <div class="flex flex-col items-center text-center gap-4 py-16">
+      <i data-lucide="cloud-off" class="w-12 h-12 w-dim"></i>
+      <div>
+        <div class="font-bold text-lg">가격 정보를 불러올 수 없어요</div>
+        <p class="w-dim text-sm mt-2">잠시 후 다시 시도해 주세요</p>
+      </div>
+      <button class="w-box px-6 py-3 font-bold flex items-center gap-2" style="background:var(--w-text); color:white;">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i> 다시 시도
+      </button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>실시간 가격 조회 실패 + 사용할 캐시도 없을 때만 노출. 캐시가 있으면 이 화면 대신 문제 화면으로 진행한다.</p>
+        <ul>
+          <li>트리거: 게임 시작 시 가격 데이터 조회 실패 & 캐시 없음</li>
+          <li>인터랙션: "다시 시도" 클릭 → 재조회</li>
+          <li>전환: 재조회 성공 → 문제(답 전), 실패 → 이 화면 유지</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentScreen = 0;
+var screenIds = [];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('nav-' + id).classList.add('active');
+  currentScreen = screenIds.indexOf(id);
+}
+
+function setViewport(mode) {
+  document.body.classList.remove('viewport-mobile', 'viewport-desktop');
+  document.body.classList.add('viewport-' + mode);
+  document.querySelectorAll('.vp-toggle button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('vp-' + mode).classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) {
+    screenIds.push(parseInt(b.id.replace('nav-', '')));
+  });
+  var first = document.querySelector('nav button[id^="nav-"]');
+  if (first) first.click();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>

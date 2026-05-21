@@ -24,6 +24,9 @@
 # production
 /build
 
+# runtime data (price cache, ranking store)
+/data
+
 # misc
 .DS_Store
 *.pem
