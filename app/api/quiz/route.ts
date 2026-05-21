@@ -7,7 +7,10 @@ import type { Question } from "@/types/quiz";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const today = new Date().toISOString().slice(0, 10);
+  // KAMIS는 한국 날짜 기준이므로 KST(UTC+9)로 오늘 날짜를 계산한다.
+  const today = new Date(Date.now() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 
   try {
     const { data, fromCache } = await getPrices(today);

@@ -4,8 +4,11 @@ import type { RankEntry } from "@/types/ranking";
 
 export const dynamic = "force-dynamic";
 
+const TOP_N = 10;
+const MAX_NICKNAME = 20;
+
 export async function GET() {
-  return NextResponse.json(readRanking());
+  return NextResponse.json(readRanking().slice(0, TOP_N));
 }
 
 export async function POST(req: Request) {
@@ -14,9 +17,14 @@ export async function POST(req: Request) {
     typeof body?.nickname === "string" ? body.nickname.trim() : "";
   const score = Number(body?.score);
 
-  if (!nickname || !Number.isFinite(score) || score < 0) {
+  if (
+    !nickname ||
+    nickname.length > MAX_NICKNAME ||
+    !Number.isInteger(score) ||
+    score < 0
+  ) {
     return NextResponse.json(
-      { error: "닉네임과 점수가 필요합니다" },
+      { error: "닉네임(1-20자)과 정수 점수가 필요합니다" },
       { status: 400 },
     );
   }
@@ -27,5 +35,5 @@ export async function POST(req: Request) {
     createdAt: new Date().toISOString(),
   };
   const list = addRanking(entry);
-  return NextResponse.json(list, { status: 201 });
+  return NextResponse.json(list.slice(0, TOP_N), { status: 201 });
 }

@@ -41,4 +41,14 @@ describe("buildOptions", () => {
     const { options } = buildOptions(300);
     for (const o of options) expect(o.min).toBeGreaterThanOrEqual(0);
   });
+
+  it("구간 폭보다 낮은 가격(예: 150원)도 정답 구간이 가격을 포함한다", () => {
+    for (let i = 0; i < 50; i++) {
+      const { options, correctIndex } = buildOptions(150);
+      expect(options).toHaveLength(4);
+      expect(contains(options[correctIndex], 150)).toBe(true);
+      expect(options.filter((o) => contains(o, 150))).toHaveLength(1);
+      for (const o of options) expect(o.min).toBeGreaterThanOrEqual(0);
+    }
+  });
 });

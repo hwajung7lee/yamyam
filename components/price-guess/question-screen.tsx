@@ -89,7 +89,7 @@ export function QuestionScreen({
               onClick={() => onAnswer(i)}
               data-correct={revealed && isCorrect ? "true" : undefined}
               className={cn(
-                "h-auto justify-between py-4 text-base font-bold disabled:opacity-100",
+                "h-auto justify-between py-4 text-base font-bold",
                 revealed && isCorrect && "border-primary ring-2 ring-primary",
                 revealed && isSelected && !isCorrect && "border-destructive",
               )}

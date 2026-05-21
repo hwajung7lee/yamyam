@@ -27,10 +27,10 @@ export function buildOptions(actualPrice: number): BuiltOptions {
   let slot = Math.floor(Math.random() * 4);
   let base = correctLow - slot * width;
 
-  // 경계가 음수가 되지 않도록 사다리를 0 이상으로 당긴다.
+  // 사다리가 음수 구간으로 내려가면 정답을 첫 슬롯에 고정해 0 이상으로 맞춘다.
   if (base < 0) {
-    base = 0;
-    slot = correctLow / width;
+    slot = 0;
+    base = correctLow;
   }
 
   const options: PriceRange[] = Array.from({ length: 4 }, (_, i) => ({
