@@ -1,7 +1,9 @@
 import type { PriceData } from "@/types/quiz";
 
-const GEMINI_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+// 과부하/쿼터에 대비해 여러 모델을 순서대로 시도한다.
+const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-flash-latest"];
+const endpoint = (model: string) =>
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
 interface GeminiItem {
   itemName?: string;
@@ -32,17 +34,30 @@ export async function fetchPricesFromGemini(date: string): Promise<PriceData[]> 
     '한국의 대표적인 농수산물 소매 가격 8개를 JSON 배열로만 답하라. ' +
     '각 원소는 {"itemName":"품목명","unit":"단위(예: 1포기, 1kg)","price":원_단위_정수} 형식이다. ' +
     "실제 한국 시세에 가깝게 추정하라. 코드블록 없이 JSON 배열만 출력하라.";
+  const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] });
 
-  const res = await fetch(`${GEMINI_ENDPOINT}?key=${key}`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-  });
-  if (!res.ok) throw new Error(`Gemini 응답 오류: ${res.status}`);
+  let text = "";
+  let lastError: unknown = null;
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(`${endpoint(model)}?key=${key}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body,
+      });
+      if (!res.ok) {
+        lastError = new Error(`Gemini 응답 오류: ${res.status}`);
+        continue; // 다음 모델 시도
+      }
+      const json = await res.json();
+      text = json?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+      if (text) break;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  if (!text) throw lastError ?? new Error("Gemini 응답 없음");
 
-  const json = await res.json();
-  const text: string =
-    json?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
   const parsed = extractJsonArray(text);
 
   const prices: PriceData[] = (Array.isArray(parsed) ? (parsed as GeminiItem[]) : [])
