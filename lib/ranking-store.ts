@@ -1,12 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import type { RankEntry } from "@/types/ranking";
 
-/** 랭킹 파일 경로. 테스트에서 RANKING_FILE로 덮어쓸 수 있다. */
+/**
+ * 랭킹 파일 경로. 테스트에서 RANKING_FILE로 덮어쓸 수 있다.
+ * 기본값은 OS 임시 디렉토리 — 서버리스는 /tmp만 쓰기 가능하다.
+ * (서버리스에서는 인스턴스 재활용 시 초기화되므로 영속 랭킹은 외부 저장소 필요 — 후속 과제)
+ */
 function rankingFile(): string {
   return (
     process.env.RANKING_FILE ??
-    path.join(process.cwd(), "data", "ranking.json")
+    path.join(os.tmpdir(), "yamyam-ranking.json")
   );
 }
 
