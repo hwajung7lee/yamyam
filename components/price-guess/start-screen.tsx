@@ -27,9 +27,9 @@ export function StartScreen({
 
       <Card className="w-full max-w-xs">
         <CardContent className="flex flex-col items-center gap-1 py-2">
-          <span className="text-xs text-muted-foreground">내 최고 기록</span>
-          <span className="text-3xl font-bold">{bestScore ?? "-"}</span>
-          <span className="text-xs text-muted-foreground">연속 정답</span>
+          <span className="text-xs text-muted-foreground">내 최고 점수</span>
+          <span className="text-3xl font-bold tabular-nums">{bestScore ?? "-"}</span>
+          <span className="text-xs text-muted-foreground">10문제 중</span>
         </CardContent>
       </Card>
 

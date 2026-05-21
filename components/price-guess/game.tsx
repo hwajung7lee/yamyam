@@ -16,7 +16,7 @@ export function Game() {
   const quiz = useQuiz();
   const [screen, setScreen] = useState<Screen>("start");
   const [bestScore, setBestScore] = useState<number | null>(null);
-  const [finalStreak, setFinalStreak] = useState(0);
+  const [finalScore, setFinalScore] = useState(0);
   const [myNickname, setMyNickname] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,9 +29,9 @@ export function Game() {
     await quiz.start();
   };
 
-  const seeResult = () => {
-    const score = quiz.streak;
-    setFinalStreak(score);
+  const finishGame = () => {
+    const score = quiz.correctCount;
+    setFinalScore(score);
     if (bestScore === null || score > bestScore) {
       setBestScore(score);
       localStorage.setItem(BEST_SCORE_KEY, String(score));
@@ -51,7 +51,7 @@ export function Game() {
 
   if (screen === "playing") {
     if (quiz.status === "error") {
-      return <ErrorScreen onRetry={() => quiz.start()} />;
+      return <ErrorScreen onRetry={() => quiz.retry()} />;
     }
     if (quiz.status === "idle" || quiz.status === "loading" || !quiz.question) {
       return (
@@ -67,11 +67,14 @@ export function Game() {
       <QuestionScreen
         question={quiz.question}
         status={quiz.status}
-        streak={quiz.streak}
+        questionNumber={quiz.questionNumber}
+        total={quiz.total}
+        correctCount={quiz.correctCount}
+        isLast={quiz.isLastQuestion}
         selectedIndex={quiz.selectedIndex}
         onAnswer={quiz.answer}
         onNext={quiz.next}
-        onSeeResult={seeResult}
+        onFinish={finishGame}
       />
     );
   }
@@ -79,7 +82,8 @@ export function Game() {
   if (screen === "result") {
     return (
       <ResultScreen
-        finalStreak={finalStreak}
+        finalScore={finalScore}
+        total={quiz.total}
         onRegistered={(nickname) => {
           setMyNickname(nickname);
           setScreen("ranking");

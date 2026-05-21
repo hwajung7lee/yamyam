@@ -12,14 +12,16 @@ import {
 import { Input } from "@/components/ui/input";
 
 export interface ResultScreenProps {
-  finalStreak: number;
+  finalScore: number;
+  total: number;
   onRegistered: (nickname: string) => void;
   onRestart: () => void;
   onShowRanking: () => void;
 }
 
 export function ResultScreen({
-  finalStreak,
+  finalScore,
+  total,
   onRegistered,
   onRestart,
   onShowRanking,
@@ -42,7 +44,7 @@ export function ResultScreen({
       const res = await fetch("/api/ranking", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ nickname: trimmed, score: finalStreak }),
+        body: JSON.stringify({ nickname: trimmed, score: finalScore }),
       });
       if (!res.ok) throw new Error("등록 실패");
       setRegistered(true);
@@ -58,8 +60,11 @@ export function ResultScreen({
     <div className="@container mx-auto flex max-w-2xl flex-col gap-6 p-6">
       <div className="flex flex-col items-center gap-2 py-6 text-center">
         <Flame className="size-10 text-primary" />
-        <span className="text-sm text-muted-foreground">최종 연속 정답</span>
-        <span className="text-5xl font-bold">{finalStreak}</span>
+        <span className="text-sm text-muted-foreground">최종 점수</span>
+        <span className="text-5xl font-bold tabular-nums">
+          {finalScore}
+          <span className="text-2xl text-muted-foreground"> / {total}</span>
+        </span>
       </div>
 
       <form onSubmit={submit}>

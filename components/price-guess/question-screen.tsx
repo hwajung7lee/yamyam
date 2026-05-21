@@ -21,21 +21,27 @@ function formatDate(iso: string): string {
 export interface QuestionScreenProps {
   question: Question;
   status: "playing" | "correct" | "wrong";
-  streak: number;
+  questionNumber: number;
+  total: number;
+  correctCount: number;
+  isLast: boolean;
   selectedIndex: number | null;
   onAnswer: (index: number) => void;
   onNext: () => void;
-  onSeeResult: () => void;
+  onFinish: () => void;
 }
 
 export function QuestionScreen({
   question,
   status,
-  streak,
+  questionNumber,
+  total,
+  correctCount,
+  isLast,
   selectedIndex,
   onAnswer,
   onNext,
-  onSeeResult,
+  onFinish,
 }: QuestionScreenProps) {
   const revealed = status !== "playing";
   const { itemName, unit, options, correctIndex, actualPrice, market, date } =
@@ -44,9 +50,13 @@ export function QuestionScreen({
   return (
     <div className="@container mx-auto flex max-w-2xl flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
+        <span className="font-medium">
+          문제 <span className="text-lg font-bold tabular-nums">{questionNumber}</span>
+          <span className="text-muted-foreground"> / {total}</span>
+        </span>
         <span className="flex items-center gap-2 font-medium">
           <Flame className="size-5 text-primary" />
-          연속 정답 <span className="text-lg font-bold">{streak}</span>
+          맞힘 <span className="text-lg font-bold tabular-nums">{correctCount}</span>
         </span>
       </div>
 
@@ -129,18 +139,18 @@ export function QuestionScreen({
         </Card>
       )}
 
-      {status === "correct" && (
-        <Button onClick={onNext} className="w-full">
-          다음 문제
-          <ArrowRight data-icon="inline-end" />
-        </Button>
-      )}
-      {status === "wrong" && (
-        <Button onClick={onSeeResult} className="w-full">
-          결과 보기
-          <Flag data-icon="inline-end" />
-        </Button>
-      )}
+      {revealed &&
+        (isLast ? (
+          <Button onClick={onFinish} className="w-full">
+            결과 보기
+            <Flag data-icon="inline-end" />
+          </Button>
+        ) : (
+          <Button onClick={onNext} className="w-full">
+            다음 문제
+            <ArrowRight data-icon="inline-end" />
+          </Button>
+        ))}
     </div>
   );
 }
