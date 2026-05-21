@@ -75,4 +75,14 @@ describe("Game", () => {
     await userEvent.click(screen.getByRole("button", { name: /다시 시도/ }));
     expect(await screen.findByText("배추")).toBeInTheDocument();
   });
+
+  it("시작 화면 '랭킹 보기' 클릭 → 랭킹 화면으로 전환", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => [] }),
+    );
+    render(<Game />);
+    await userEvent.click(screen.getByRole("button", { name: /랭킹 보기/ }));
+    expect(await screen.findByText("전체 랭킹")).toBeInTheDocument();
+  });
 });

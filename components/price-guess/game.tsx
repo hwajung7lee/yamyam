@@ -6,6 +6,7 @@ import { StartScreen } from "./start-screen";
 import { QuestionScreen } from "./question-screen";
 import { ErrorScreen } from "./error-screen";
 import { ResultScreen } from "./result-screen";
+import { RankingScreen } from "./ranking-screen";
 
 const BEST_SCORE_KEY = "price-guess:best";
 
@@ -16,6 +17,7 @@ export function Game() {
   const [screen, setScreen] = useState<Screen>("start");
   const [bestScore, setBestScore] = useState<number | null>(null);
   const [finalStreak, setFinalStreak] = useState(0);
+  const [myNickname, setMyNickname] = useState<string | null>(null);
 
   useEffect(() => {
     const raw = localStorage.getItem(BEST_SCORE_KEY);
@@ -78,13 +80,19 @@ export function Game() {
     return (
       <ResultScreen
         finalStreak={finalStreak}
-        onRegistered={() => setScreen("ranking")}
+        onRegistered={(nickname) => {
+          setMyNickname(nickname);
+          setScreen("ranking");
+        }}
         onRestart={startGame}
         onShowRanking={() => setScreen("ranking")}
       />
     );
   }
 
-  // screen === "ranking" — Task 8에서 통합
+  if (screen === "ranking") {
+    return <RankingScreen myNickname={myNickname} onRestart={startGame} />;
+  }
+
   return null;
 }
