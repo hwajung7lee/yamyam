@@ -124,15 +124,16 @@ export function QuestionScreen({
             </span>
             <span className="text-xs text-muted-foreground">
               {market} · {formatDate(date)} 기준
-              {question.estimated && (
+              {question.estimated ? (
                 <Badge variant="secondary" className="ml-2">
                   AI 추정
                 </Badge>
-              )}
-              {question.fromCache && (
-                <Badge variant="secondary" className="ml-2">
-                  최근 시세
-                </Badge>
+              ) : (
+                question.fromCache && (
+                  <Badge variant="secondary" className="ml-2">
+                    최근 시세
+                  </Badge>
+                )
               )}
             </span>
           </CardContent>

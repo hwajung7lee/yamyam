@@ -4,13 +4,15 @@ export interface PriceRange {
   max: number;
 }
 
-/** KAMIS에서 가져온(또는 캐시된) 단일 품목 가격. */
+/** KAMIS·Gemini에서 가져온(또는 캐시된) 단일 품목 가격. */
 export interface PriceData {
   itemName: string;
   unit: string;
   price: number;
   date: string;
   market: string;
+  /** 실데이터가 아니라 AI(LLM) 추정 시세인지. 캐시를 통과해도 출처가 유지된다. */
+  estimated: boolean;
 }
 
 /** 한 문제. `/api/quiz`가 반환하는 형태. */

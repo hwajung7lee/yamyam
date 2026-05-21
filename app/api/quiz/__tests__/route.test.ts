@@ -19,9 +19,8 @@ beforeEach(() => {
 describe("GET /api/quiz", () => {
   it("200과 Question 형태(보기 4개, 정답 구간이 실제 가격 포함)를 반환한다", async () => {
     vi.mocked(getPrices).mockResolvedValue({
-      data: [{ itemName: "배추", unit: "1포기", price: 3200, date: "2026-05-21", market: "소매" }],
+      data: [{ itemName: "배추", unit: "1포기", price: 3200, date: "2026-05-21", market: "소매", estimated: false }],
       fromCache: false,
-      estimated: false,
     });
 
     const res = await GET();
@@ -42,9 +41,8 @@ describe("GET /api/quiz", () => {
 
   it("캐시 폴백 시 200 + fromCache=true, date는 캐시 날짜", async () => {
     vi.mocked(getPrices).mockResolvedValue({
-      data: [{ itemName: "무", unit: "1개", price: 1500, date: "2026-05-20", market: "소매" }],
+      data: [{ itemName: "무", unit: "1개", price: 1500, date: "2026-05-20", market: "소매", estimated: false }],
       fromCache: true,
-      estimated: false,
     });
 
     const res = await GET();
@@ -54,11 +52,10 @@ describe("GET /api/quiz", () => {
     expect(q.date).toBe("2026-05-20");
   });
 
-  it("AI 추정 폴백 시 estimated=true로 반환한다", async () => {
+  it("AI 추정 데이터면 estimated=true로 반환한다", async () => {
     vi.mocked(getPrices).mockResolvedValue({
-      data: [{ itemName: "사과", unit: "1개", price: 2000, date: "2026-05-21", market: "AI 추정" }],
+      data: [{ itemName: "사과", unit: "1개", price: 2000, date: "2026-05-21", market: "AI 추정", estimated: true }],
       fromCache: false,
-      estimated: true,
     });
     const res = await GET();
     expect(res.status).toBe(200);

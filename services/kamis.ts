@@ -50,6 +50,7 @@ export async function fetchPricesFromKamis(date: string): Promise<PriceData[]> {
       price: parsePrice(it.dpr1),
       date,
       market: "소매",
+      estimated: false,
     }))
     .filter((p) => p.itemName && Number.isFinite(p.price) && p.price > 0);
 

@@ -34,7 +34,14 @@ export async function fetchPricesFromGemini(date: string): Promise<PriceData[]> 
     '한국의 대표적인 농수산물 소매 가격 8개를 JSON 배열로만 답하라. ' +
     '각 원소는 {"itemName":"품목명","unit":"단위(예: 1포기, 1kg)","price":원_단위_정수} 형식이다. ' +
     "실제 한국 시세에 가깝게 추정하라. 코드블록 없이 JSON 배열만 출력하라.";
-  const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] });
+  const body = JSON.stringify({
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      // thinking을 끄고 JSON 응답을 강제해 지연을 줄이고 파싱을 안정화한다.
+      thinkingConfig: { thinkingBudget: 0 },
+      responseMimeType: "application/json",
+    },
+  });
 
   let text = "";
   let lastError: unknown = null;
@@ -67,6 +74,7 @@ export async function fetchPricesFromGemini(date: string): Promise<PriceData[]> 
       price: Number(p.price),
       date,
       market: "AI 추정",
+      estimated: true,
     }))
     .filter((p) => p.itemName && Number.isFinite(p.price) && p.price > 0);
 
