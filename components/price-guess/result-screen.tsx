@@ -69,6 +69,9 @@ export function ResultScreen({
             <div className="flex gap-2">
               <Input
                 id="nickname"
+                name="nickname"
+                autoComplete="off"
+                spellCheck={false}
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="닉네임 입력"

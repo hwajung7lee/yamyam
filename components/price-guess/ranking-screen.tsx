@@ -65,7 +65,7 @@ export function RankingScreen({ myNickname, onRestart }: RankingScreenProps) {
                   {entry.nickname}
                   {isMe && " (나)"}
                 </span>
-                <span className="font-bold">{entry.score}</span>
+                <span className="font-bold tabular-nums">{entry.score}</span>
               </li>
             );
           })}
